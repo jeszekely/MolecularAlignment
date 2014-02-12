@@ -1,0 +1,25 @@
+{
+	"FDTDField": {
+		"File": "Z1064_mod.txt",	
+		"laser_power": 1.0e10, 
+		"laser_focus": 5640.0, 
+		"meep_a": 100.0, 
+		"meep_res": 20.0 
+	},
+	"MoleculeParameters": {
+		"ParamFile": "Molecules.json", 
+		"Molecule": "Cl2" 
+	},
+	"CalculationParameters": {
+		"JStates": 30, 
+		"UseM": 0, 
+		"UseOdd": 0, 
+		"Procs": 4, 
+		"AllField": 1 
+	},
+	"Outputs": {
+		"JBasis": 0, 
+		"Couplings": 0, 
+		"EigenVectors": 0 
+	}
+}
