@@ -467,6 +467,14 @@ Define the Hamiltonian
 
 	AlignmentFile.close();
 
+
+/*******************************************
+Calculate QM Trajectory using calculated PES
+********************************************/
+
+
+
+
 /*********************
 Print final commments
 **********************/

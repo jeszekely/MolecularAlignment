@@ -1,6 +1,6 @@
 {
 	"FDTDField": {
-		"File": "Z1064_mod.txt",	
+		"File": "AgFilmX-3col.txt",	
 		"laser_power": 1.0e10, 
 		"laser_focus": 5640.0, 
 		"meep_a": 100.0, 

@@ -1,6 +1,6 @@
 {
 	"FDTDField": {
-		"File": "Z1064_mod.txt",	//File containing the FDTD result field, in 3 column format
+		"File": "AgFilmX-3col.txt",	//File containing the FDTD result field, in 3 column format
 		"laser_power": 1.0e10, // Laser power in Watts
 		"laser_focus": 5640.0, // Radius of laser spot in micrometers
 		"meep_a": 100.0, // Meep "a" unit, in nm 
