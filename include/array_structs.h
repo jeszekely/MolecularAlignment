@@ -1,7 +1,7 @@
 typedef std::complex<double> cplx;
 using namespace std;
 
-//	Class for a 2D array and associated variables needed for split operator calculations
+//	Class for a 2D Array and associated variables needed for split operator calculations
 template <typename T> class Array_2D
 {
 	public:
