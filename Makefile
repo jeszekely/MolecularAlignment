@@ -14,12 +14,16 @@ CFLAGS = -g -debug -O2 -openmp -I$(MKLROOT)/include -mkl
 GSL_INC = -I/Users/joshuaszekely/Desktop/NUResearch/Codes/gsl-1.15
 BOOST_INC = -I/opt/local/include/
 
-OBJ  =   obj/main.o  obj/array_structs.o  obj/numerics.o 
+FFTW_DIR = /Users/joshuaszekely/Desktop/NUResearch/Codes/fftw-3.3.1_c++
+FFTW_LIB = -L$(FFTW3_DIR)
+FFTW_INC = -I$(FFTW3_DIR)include
+
+OBJ  =   obj/main.o  obj/array_structs.o  obj/numerics.o obj/quantum_dynamics.o
 
 LIBS = -lm -lgsl 
 #LIBS =   -L$(MKLROOT)/lib -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread -lm -lgsl
 
-HEADS =  include/array_structs.h include/numerics.h
+HEADS =  include/array_structs.h include/numerics.h include/quantum_dynamics.h
 BIN  =   MolecAlignment
 
 RM = rm  -f
@@ -41,3 +45,6 @@ obj/array_structs.o: src/array_structs.cpp
 
 obj/numerics.o: src/numerics.cpp
 	$(CC) $(CFLAGS) $(GSL_INC) -c src/numerics.cpp  -o obj/numerics.o  -I./include 
+
+obj/quantum_dynamics.o: src/quantum_dynamics.cpp 
+	$(CC) $(CFLAGS) -c src/quantum_dynamics.cpp -o obj/quantum_dynamics.o -I/include 
