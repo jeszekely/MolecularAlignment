@@ -8,9 +8,12 @@
 	},
 	"MoleculeParameters": {
 		"ParamFile": "Molecules.json", //File containing molecule data
-		"Molecule": "Cl2" //Selected Molecule
+		"Molecule": "Cl2", //Selected Molecule
+		"InitialX": 3.0, //Initial molecule position coordinates, in 100's of nm 
+		"InitialY": 25.0
 	},
 	"CalculationParameters": {
+		"Threads": 4,
 		"JStates": 30, // maximum J rotational state to use
 		"UseM": 0, // if not 0, use M states other than M=0
 		"UseOdd": 0, //if not 0, use odd J states

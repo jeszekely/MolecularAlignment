@@ -12,7 +12,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-
+#include <fftw3.h>
 #include <gsl/gsl_sf_coupling.h>
 
 #include "mkl.h"
@@ -24,6 +24,7 @@
 
 #include "array_structs.h"
 #include "numerics.h"
+#include "quantum_dynamics.h"
 
 using namespace std;
 
@@ -96,11 +97,15 @@ Get Data from the inputfile
     cout << "Reading file " << FieldFile << endl;  
     double laser_power 	= pt.get<double>("FDTDField.laser_power",10.0);
     double laser_focus 	= pt.get<double>("FDTDField.laser_focus",5.0);
+    double Field_a = pt.get<double>("FDTDField.meep_a",100.0); 
+    double Field_res = pt.get<double>("MolFile.meep_res",20.0);
 
 //	[MoleculeParameters]
 
     string MolFile 	= pt.get<string>("MoleculeParameters.ParamFile","Molecules.json");
     string Molecule = pt.get<string>("MoleculeParameters.Molecule","N2");
+    double InitialX = pt.get<double>("MoleculeParameters.InitialX",3.0); 
+    double InitialY = pt.get<double>("MoleculeParameters.InitialY",25.0); 
 
 //	[CalculationParameters]
 	int Procs 	= pt.get<int>("CalculationParameters.Procs",1);
@@ -108,6 +113,7 @@ Get Data from the inputfile
 	int UseM	= pt.get<int>("CalculationParameters.UseM",0);
 	int UseOdd	= pt.get<int>("CalculationParameters.UseOdd",0);
 	int AllField = pt.get<int>("CalculationParameters.AllField",0);
+	int num_procs = pt.get<int>("CalculationParameters.Threads",1); 
 
 //	[Outputs]
 	int JBasisOut = pt.get<int>("Outputs.JBasis",0);
@@ -467,13 +473,112 @@ Define the Hamiltonian
 
 	AlignmentFile.close();
 
-
 /*******************************************
 Calculate QM Trajectory using calculated PES
 ********************************************/
+	
+	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
+
+	//Initialize fftw threading
+	fftw_init_threads(); 
+	fftw_plan_with_nthreads(Procs); 
+
+	//define step sizes and calculation arrays
+	double xstep = Field_a/(LEN*Field_res); //Field Spacing in au
+	double ystep = xstep; 
+	double pstep = M_PI*2.0/(xsize*xstep); 
+	double qstep = M_PI*2.0/(ysize*ystep);
+
+	Array_1D <double> Xgrid(xsize); 
+	Xgrid.xinit = 0.0; 
+	Xgrid.xstep = xstep; 
+	Xgrid.fill_array(); 
+
+	Array_1D <double> Ygrid(ysize); 
+	Ygrid.xinit = 0.0; 
+	Ygrid.xstep = ystep; 
+	Ygrid.fill_array(); 
+	
+	Array_1D <double> Pgrid(xsize); 
+	Pgrid.xinit = 0.0; 
+	Pgrid.xstep = pstep; 
+	Pgrid.fill_array(); 
+	
+	Array_1D <double> Qgrid(ysize); 
+	Qgrid.xinit = 0.0; 
+	Qgrid.xstep = qstep; 
+	Qgrid.fill_array(); 
+
+	//Correct array ordering
+	for (ii = xsize/2; ii < xsize; ii++)
+	{
+		Pgrid.grid[ii] = -1.0*Pgrid.grid[xsize - ii];
+	}
+
+	for (jj = ysize/2; jj < ysize; jj++)
+	{
+		Qgrid.grid[jj] = -1.0*Qgrid.grid[ysize - jj];
+	}
+
+	Array_2D <double> KE(xsize, ysize); 
+	KE.xstep = pstep; 
+	KE.ystep = qstep; 
+	for (ii = 0; ii < KE.Nx; ii++)
+	{
+		for (jj = 0; jj < KE.Ny; jj++)
+		{
+			KE.set_elem(ii,jj, (0.5/(amass1+amass2))*(pow(Pgrid.grid[ii],2) + pow(Qgrid.grid[jj],2)));
+		}
+	}
+
+	double dt = 1.0e7; 
+	cplx comp; 
+
+	Array_2D <cplx> KinetOp(KE.Nx,KE.Ny);
+	for (ii=0; ii < KE.Nx*KE.Ny; ii++)
+	{
+		comp				= -0.5j * dt * KE.grid[ii];
+		KinetOp.grid[ii] 	= exp(comp);
+	}
+
+	Array_2D <cplx> PotenOp(ENERGYARRAY.Nx,ENERGYARRAY.Ny);
+	for (ii=0; ii < ENERGYARRAY.Nx*ENERGYARRAY.Ny; ii++)
+	{
+		comp 				= -1.0j * dt * ENERGYARRAY.grid[ii];
+		PotenOp.grid[ii] 	= exp(comp);
+	}
+
+	//Set up the wavefunction array
+	Array_2D <cplx> Wvfxn(xsize, ysize); 
+	Wvfxn.xstep = xstep; 
+	Wvfxn.ystep = ystep; 
+
+	fftw_plan forplan, backplan; 
+	forplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_FORWARD, FFTW_MEASURE); 
+	backplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_BACKWARD, FFTW_MEASURE); 
+
+	for (ii = 0; ii < Wvfxn.Nx*Wvfxn.Ny; ii++)
+	{
+		Wvfxn.grid[ii] = 0.0; 
+	}
+
+	//Place the Particle at an initial location 
+	Wvfxn.set_elem((int)(InitialX*Field_a/Field_res),(int)(InitialY*Field_a/Field_res), 1.0);
+
+	int tindex = 0; 
+	do 
+	{
+		if (tindex % 100 == 0)
+		{
+			print_wvfxn(Wvfxn, Xgrid, Ygrid, tindex); 
+		}
+		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan); 
+		Wvfxn.time += dt; 
+		tindex++; 
+	} while (tindex < 2000);
 
 
-
+	cout << endl << "Done." << endl; 
 
 /*********************
 Print final commments
