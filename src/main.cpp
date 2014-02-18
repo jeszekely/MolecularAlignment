@@ -104,9 +104,7 @@ Get Data from the inputfile
 
     string MolFile 	= pt.get<string>("MoleculeParameters.ParamFile","Molecules.json");
     string Molecule = pt.get<string>("MoleculeParameters.Molecule","N2");
-    double InitialX = pt.get<double>("MoleculeParameters.InitialX",3.0); 
-    double InitialY = pt.get<double>("MoleculeParameters.InitialY",25.0); 
-
+    
 //	[CalculationParameters]
 	int Procs 	= pt.get<int>("CalculationParameters.Procs",1);
 	int JMax 	= pt.get<int>("CalculationParameters.JStates",10);
@@ -114,6 +112,13 @@ Get Data from the inputfile
 	int UseOdd	= pt.get<int>("CalculationParameters.UseOdd",0);
 	int AllField = pt.get<int>("CalculationParameters.AllField",0);
 	int num_procs = pt.get<int>("CalculationParameters.Threads",1); 
+
+//	[TrajectoryParameters]
+	double InitialX = pt.get<double>("TrajectoryParameters.InitialX",3.0); 
+    double InitialY = pt.get<double>("TrajectoryParameters.InitialY",25.0);
+    double dt 		= pt.get<double>("TrajectoryParameters.dt",1.0e7); 
+    double dt_steps = pt.get<int>("TrajectoryParameters.dt_steps",2000);
+
 
 //	[Outputs]
 	int JBasisOut = pt.get<int>("Outputs.JBasis",0);
@@ -477,6 +482,7 @@ Define the Hamiltonian
 Calculate QM Trajectory using calculated PES
 ********************************************/
 	
+	cout << "Considering trajectory for " << dt*dt_steps/1.89e7 << " ns." << endl
 	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
 
 	//Initialize fftw threading
@@ -531,7 +537,6 @@ Calculate QM Trajectory using calculated PES
 		}
 	}
 
-	double dt = 1.0e7; 
 	cplx comp; 
 
 	Array_2D <cplx> KinetOp(KE.Nx,KE.Ny);
@@ -576,7 +581,7 @@ Calculate QM Trajectory using calculated PES
 		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan); 
 		Wvfxn.time += dt; 
 		tindex++; 
-	} while (tindex < 2000);
+	} while (tindex < dt_steps);
 
 
 	cout << endl << "Done." << endl; 

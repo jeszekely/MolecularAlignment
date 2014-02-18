@@ -8,9 +8,7 @@
 	},
 	"MoleculeParameters": {
 		"ParamFile": "Molecules.json", //File containing molecule data
-		"Molecule": "Cl2", //Selected Molecule
-		"InitialX": 3.0, //Initial molecule position coordinates, in 100's of nm 
-		"InitialY": 25.0
+		"Molecule": "Cl2" //Selected Molecule
 	},
 	"CalculationParameters": {
 		"Threads": 4,
@@ -19,6 +17,12 @@
 		"UseOdd": 0, //if not 0, use odd J states
 		"Procs": 4, // number of processors
 		"AllField": 1 // 0 to calc just a few data points, 1 to use whole EM field file
+	},
+	"TrajectoryParameters": {
+		"InitialX": 3.0, 	//Initial molecule position coordinates, in 100's of nm 
+		"InitialY": 25.0,
+		"dt": 1.0e7, 		//Time step for split operator
+		"dt_steps": 2000 	//total number of timesteps
 	},
 	"Outputs": {
 		"JBasis": 0, // Output J,K,M for each basis function, (1) prints to screen, (2) prints to file
