@@ -482,7 +482,7 @@ Define the Hamiltonian
 Calculate QM Trajectory using calculated PES
 ********************************************/
 	
-	cout << "Considering trajectory for " << dt*dt_steps/1.89e7 << " ns." << endl
+	cout << "Considering trajectory for " << dt*dt_steps/1.89e7 << " ns." << endl;
 	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
 
 	//Initialize fftw threading
