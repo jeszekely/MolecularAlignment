@@ -8,9 +8,12 @@
 	},
 	"MoleculeParameters": {
 		"ParamFile": "Molecules.json", 
-		"Molecule": "Cl2" 
+		"Molecule": "Cl2", 
+		"InitialX": 3.0, 
+		"InitialY": 25.0
 	},
 	"CalculationParameters": {
+		"Threads": 4,
 		"JStates": 30, 
 		"UseM": 0, 
 		"UseOdd": 0, 

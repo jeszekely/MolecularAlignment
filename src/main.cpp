@@ -563,7 +563,8 @@ Calculate QM Trajectory using calculated PES
 	}
 
 	//Place the Particle at an initial location 
-	Wvfxn.set_elem((int)(InitialX*Field_a/Field_res),(int)(InitialY*Field_a/Field_res), 1.0);
+	cout << (int)(InitialY*Field_res) << " " << (int)(InitialX*Field_res) << endl;
+ 	Wvfxn.set_elem((int)(InitialY*Field_res),(int)(InitialX*Field_res), 1.0);
 
 	int tindex = 0; 
 	do 
