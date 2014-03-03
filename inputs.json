@@ -21,8 +21,9 @@
 	"TrajectoryParameters": {
 		"InitialX": 3.0, 	//Initial molecule position coordinates, in 100's of nm 
 		"InitialY": 25.0,
-		"dt": 1.0e7, 		//Time step for split operator
-		"dt_steps": 2000 	//total number of timesteps
+		"ttotal": 2.0e8,	//Trajector time in fs
+		"tsteps": 1.0e4, 	//Total number of time steps
+		"dt_image_out": 2000 	//interval for image output
 	},
 	"Outputs": {
 		"JBasis": 0, // Output J,K,M for each basis function, (1) prints to screen, (2) prints to file

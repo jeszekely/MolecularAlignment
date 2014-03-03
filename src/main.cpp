@@ -116,9 +116,9 @@ Get Data from the inputfile
 //	[TrajectoryParameters]
 	double InitialX = pt.get<double>("TrajectoryParameters.InitialX",3.0); 
     double InitialY = pt.get<double>("TrajectoryParameters.InitialY",25.0);
-    double dt 		= pt.get<double>("TrajectoryParameters.dt",1.0e7); 
-    double dt_steps = pt.get<int>("TrajectoryParameters.dt_steps",2000);
-
+    double ttotal 	= pt.get<double>("TrajectoryParameters.ttotal",2.0e8); 
+    int tsteps = pt.get<int>("TrajectoryParameters.tsteps",2000);
+    int dt_image_out = pt.get<int>("TrajectoryParameters",100);
 
 //	[Outputs]
 	int JBasisOut = pt.get<int>("Outputs.JBasis",0);
@@ -482,7 +482,9 @@ Define the Hamiltonian
 Calculate QM Trajectory using calculated PES
 ********************************************/
 	
-	cout << "Considering trajectory for " << dt*dt_steps/1.89e7 << " ns." << endl;
+	double dt = ttotal/tsteps; 
+	dt /= 2.41e-2; //fs -> au
+	cout << "Considering trajectory for " << dt*tsteps/1.89e7 << " ns." << endl;
 	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
 
 	//Initialize fftw threading
@@ -574,14 +576,14 @@ Calculate QM Trajectory using calculated PES
 	int tindex = 0; 
 	do 
 	{
-		if (tindex % 100 == 0)
+		if (tindex % dt_image_out == 0)
 		{
 			print_wvfxn(Wvfxn, Xgrid, Ygrid, tindex); 
 		}
 		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan); 
 		Wvfxn.time += dt; 
 		tindex++; 
-	} while (tindex < dt_steps);
+	} while (tindex < (int)ttotal);
 
 
 	cout << endl << "Done." << endl; 
