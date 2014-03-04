@@ -583,10 +583,10 @@ Calculate QM Trajectory using calculated PES
 		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan); 
 		Wvfxn.time += dt; 
 		tindex++; 
-	} while (tindex < (int)ttotal);
+	} while (Wvfxn.time < ttotal);
 
 
-	cout << endl << "Done." << endl; 
+	cout << endl << "Done. " << tindex << "total time steps." << endl; 
 
 /*********************
 Print final commments
