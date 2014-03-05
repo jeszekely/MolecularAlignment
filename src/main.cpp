@@ -12,7 +12,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <fftw3.h>
 #include <gsl/gsl_sf_coupling.h>
 
 #include "mkl.h"
@@ -564,15 +563,23 @@ Calculate QM Trajectory using calculated PES
 	forplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_FORWARD, FFTW_MEASURE); 
 	backplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_BACKWARD, FFTW_MEASURE); 
 
-	for (ii = 0; ii < Wvfxn.Nx*Wvfxn.Ny; ii++)
+	//Set initial wavefunction
+	// for (ii = 0; ii < Wvfxn.Nx*Wvfxn.Ny; ii++)
+	// {
+	// 	Wvfxn.grid[ii] = 0.0; 
+	// }
+	for (ii = 0; ii < Wvfxn.Nx; ii++)
 	{
-		Wvfxn.grid[ii] = 0.0; 
+		for (jj = 0; jj < Wvfxn.Ny; jj++)
+		{
+			Wvfxn.set_elem(ii,jj,gaussian(Xgrid.grid[ii],Ygrid.grid[ii],InitialY*Field_res,InitialX*Field_res));
+		}
 	}
+	normalize_wxfxn_2D(Wvfxn);
 
 	//Place the Particle at an initial location 
 	cout << (int)(InitialY*Field_res) << " " << (int)(InitialX*Field_res) << endl;
- 	Wvfxn.set_elem((int)(InitialY*Field_res),(int)(InitialX*Field_res), 1.0);
-
+ 	//Wvfxn.set_elem((int)(InitialY*Field_res),(int)(InitialX*Field_res), 1.0);
 	int tindex = 0; 
 	do 
 	{

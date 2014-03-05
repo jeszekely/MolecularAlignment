@@ -517,3 +517,9 @@ void normalize_wxfxn_2D(Array_2D <T> &A, Array_2D <T> &S)
 
 double FMIME (int J, int K, int M, int Q, int S, int j, int k, int m);
 
+template <typename T>
+double gaussian (T x, T y, T xcen, T ycen)
+{
+	return exp(-1.0*(pow(x-xcen,2) + pow(y-ycen,2))/pow(50.0,2)); 
+}
+
