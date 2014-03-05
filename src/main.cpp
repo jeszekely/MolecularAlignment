@@ -483,6 +483,7 @@ Calculate QM Trajectory using calculated PES
 	
 	double dt = ttotal/tsteps; 
 	dt /= 2.41e-2; //fs -> au
+	ttotal /= 2.41e-2; 
 	cout << "Considering trajectory for " << dt*tsteps/1.89e7 << " ns." << endl;
 	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
 
@@ -572,7 +573,7 @@ Calculate QM Trajectory using calculated PES
 	{
 		for (jj = 0; jj < Wvfxn.Ny; jj++)
 		{
-			Wvfxn.set_elem(ii,jj,gaussian(Xgrid.grid[ii],Ygrid.grid[ii],InitialY*Field_res,InitialX*Field_res));
+			Wvfxn.set_elem(ii,jj,gaussian(Xgrid.grid[ii],Ygrid.grid[ii],xstep*InitialX*Field_res,ystep*InitialY*Field_res));
 		}
 	}
 	normalize_wxfxn_2D(Wvfxn);
