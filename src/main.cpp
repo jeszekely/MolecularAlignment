@@ -30,6 +30,7 @@ using namespace std;
 typedef std::complex<double> cplx;
 typedef std::vector< std::vector<int> > basis_states;
 
+double gaussian(double x, double y, double xcen, double ycen);
 void print_matrix(char* desc, int m, int n, double *a, int lda);
 void check(int n);
 
@@ -573,10 +574,10 @@ Calculate QM Trajectory using calculated PES
 	{
 		for (jj = 0; jj < Wvfxn.Ny; jj++)
 		{
-			Wvfxn.set_elem(ii,jj,gaussian(Xgrid.grid[ii],Ygrid.grid[ii],xstep*InitialX*Field_res,ystep*InitialY*Field_res));
+			Wvfxn.set_elem(ii,jj,gaussian(Xgrid.grid[ii],Ygrid.grid[jj],xstep*InitialX*Field_res,ystep*InitialY*Field_res));
 		}
 	}
-	normalize_wxfxn_2D(Wvfxn);
+//	normalize_wxfxn_2D(Wvfxn);
 
 	//Place the Particle at an initial location 
 	cout << (int)(InitialY*Field_res) << " " << (int)(InitialX*Field_res) << endl;
@@ -594,7 +595,7 @@ Calculate QM Trajectory using calculated PES
 	} while (Wvfxn.time < ttotal);
 
 
-	cout << endl << "Done. " << tindex << "total time steps." << endl; 
+	cout << endl << "Done. " << tindex << " total time steps." << endl; 
 
 /*********************
 Print final commments
@@ -608,6 +609,12 @@ Print final commments
 
 	exit(0);
 }
+
+double gaussian(double x, double y, double xcen, double ycen)
+{
+	return exp(-1.0*(pow(x-xcen,2.0) + pow(y-ycen,2.0))/pow(50.0,2.0)); 
+};
+
 
 void print_matrix(char* desc, int m, int n, double* a, int lda)
 {
