@@ -91,7 +91,7 @@ template <typename T> class Array_1D
 		void fill_array()
 		{
 			int ii;
-			for (ii = 0; ii<Nx; ii++) 
+			for (ii = 0; ii<Nx; ii++)
 			{
 				grid[ii] = (xinit + ii*xstep);
 			}
@@ -213,7 +213,7 @@ template <typename T> class EigenArray_1D
 			T *num;
 			Array_1D <T> A(Nx);
 			A.xstep = real((cplx)xstep);
-			
+
 			for (ii = 0; ii < n; ii++)
 			{
 				num = get_array_addr(ii);
@@ -236,7 +236,7 @@ template <typename T> class EigenArray_1D
 			Array_1D <T> A(Nx);
 			A.xstep = real(cplx(xstep));
 			num 	= get_array_addr(nn);
-			
+
 			for (ii = 0; ii < Nx; ii++)
 			{
 				A.grid[ii] = num[ii];

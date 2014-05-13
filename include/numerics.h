@@ -7,17 +7,17 @@ using namespace std;
 template <typename T>
 T deriv_1D_1st(Array_1D <T> &A, int N)
 {
-	if (N < 3) 
+	if (N < 3)
 	{
 		T deriv = (1/(12*A.xstep)) * (-25*A.grid[N] + 48*A.grid[N+1]-36*A.grid[N+2]+16*A.grid[N+3]-3*A.grid[N+4]);
 		return deriv;
-	} 
+	}
 	else if (N > (A.Nx-4))
 	{
 		T deriv = (1/(12*A.xstep)) * (25*A.grid[N]-48*A.grid[N-1]+36*A.grid[N-2]-16*A.grid[N-3]+3*A.grid[N-4]);
 		return deriv;
-	} 
-	else 
+	}
+	else
 	{
 		T deriv = (1.0/(60*A.xstep)) * (-1.0*A.grid[N-3] + 9.0*A.grid[N-2] - 45.0*A.grid[N-1] + 45.0*A.grid[N+1] - 9.0*A.grid[N+2] + 1.0*A.grid[N+3]);
 		return deriv;
@@ -28,19 +28,19 @@ T deriv_1D_1st(Array_1D <T> &A, int N)
 template <typename T>
 T deriv_1D_2nd(Array_1D <T> &A, int N)
 {
-	if (N < 3) 
+	if (N < 3)
 	{
 		T deriv = (45*A.grid[N] - 154*A.grid[N+1] + 214*A.grid[N+2] - 156*A.grid[N+3] + 61*A.grid[N+4] - 10*A.grid[N+5]);
 		deriv /= (12*A.xstep*A.xstep);
 		return deriv;
 	}
-	else if (N > (A.Nx-4)) 
+	else if (N > (A.Nx-4))
 	{
 		T deriv = (45*A.grid[N] - 154*A.grid[N-1] + 214*A.grid[N-2] - 156*A.grid[N-3] + 61*A.grid[N-4] - 10*A.grid[N-5]);
 		deriv /= (12*A.xstep*A.xstep);
 		return deriv;
 	}
-	else 
+	else
 	{
 		T deriv = 2*A.grid[N-3] - 27*A.grid[N-2] + 270*A.grid[N-1] - 490*A.grid[N] + 270*A.grid[N+1] - 27*A.grid[N+2] + 2*A.grid[N+3];
 		deriv /= (180*A.xstep*A.xstep);
@@ -52,17 +52,17 @@ T deriv_1D_2nd(Array_1D <T> &A, int N)
 template <typename T>
 T integrate_1D(Array_1D <T> &A, int NLower, int NUpper)
 {
-	if (NUpper >= A.Nx) 
+	if (NUpper >= A.Nx)
 	{
 		NUpper = A.Nx-1; //correct if upper limit is too large
 	}
-	if (NLower < 0 && NLower >= NUpper) 
+	if (NLower < 0 && NLower >= NUpper)
 	{
 		NLower = 0; //correct if lower limit is too large or negative
 	}
 	T sum = 0;
 	int ii;
-	for (ii = NLower+1; ii < NUpper; ii++) 
+	for (ii = NLower+1; ii < NUpper; ii++)
 	{
 		sum += A.grid[ii];
 	}
@@ -77,7 +77,7 @@ T integrate_1D(Array_1D <T> &A)
 {
 	T sum = 0;
 	int ii;
-	for (ii = 1; ii < A.Nx-1; ii++) 
+	for (ii = 1; ii < A.Nx-1; ii++)
 	{
 		sum += A.grid[ii];
 	}
@@ -90,7 +90,7 @@ T integrate_1D(Array_1D <T> &A)
 template <typename T>
 T partial_x(Array_2D <T> &A, int Nx, int Ny)
 {
-	if (Nx < 3) 
+	if (Nx < 3)
 	{
 		T deriv = (1/(12*A.xstep)) * (-25*A.get_elem(Nx,Ny) + 48*A.get_elem(Nx+1,Ny) - 36*A.get_elem(Nx+2,Ny) + 16*A.get_elem(Nx+3,Ny) - 3*A.get_elem(Nx+4,Ny));
 		return deriv;
@@ -100,7 +100,7 @@ T partial_x(Array_2D <T> &A, int Nx, int Ny)
 		T deriv = (1/(12*A.xstep)) * (25*A.get_elem(Nx,Ny) - 48*A.get_elem(Nx-1,Ny) + 36*A.get_elem(Nx-2,Ny) - 16*A.get_elem(Nx-3,Ny) + 3*A.get_elem(Nx-4,Ny));
 		return deriv;
 	}
-	else 
+	else
 	{
 		T deriv = (1.0/(60*A.xstep)) * (-1.0*A.get_elem(Nx-3,Ny) + 9.0*A.get_elem(Nx-2,Ny) - 45.0*A.get_elem(Nx-1,Ny) + 45.0*A.get_elem(Nx+1,Ny) - 9.0*A.get_elem(Nx+2,Ny) + 1.0*A.get_elem(Nx+3,Ny));
 		return deriv;
@@ -111,7 +111,7 @@ T partial_x(Array_2D <T> &A, int Nx, int Ny)
 template <typename T>
 T partial_y(Array_2D <T> &A, int Nx, int Ny)
 {
-	if (Ny < 3) 
+	if (Ny < 3)
 	{
 		T deriv = (1/(12.0*A.ystep)) * (-25*A.get_elem(Nx,Ny) + 48*A.get_elem(Nx,Ny+1) - 36*A.get_elem(Nx,Ny+2) + 16*A.get_elem(Nx,Ny+3) - 3*A.get_elem(Nx,Ny+4));
 		return deriv;
@@ -121,7 +121,7 @@ T partial_y(Array_2D <T> &A, int Nx, int Ny)
 		T deriv = (1/(12.0*A.ystep)) * (25*A.get_elem(Nx,Ny) - 48*A.get_elem(Nx,Ny-1) + 36*A.get_elem(Nx,Ny-2) - 16*A.get_elem(Nx,Ny-3) + 3*A.get_elem(Nx,Ny-4));
 		return deriv;
 	}
-	else 
+	else
 	{
 		T deriv = (1.0/(60.0*A.ystep)) * (-1.0*A.get_elem(Nx,Ny-3) + 9.0*A.get_elem(Nx,Ny-2) - 45.0*A.get_elem(Nx,Ny-1) + 45.0*A.get_elem(Nx,Ny+1) - 9.0*A.get_elem(Nx,Ny+2) + 1.0*A.get_elem(Nx,Ny+3));
 		return deriv;
@@ -132,7 +132,7 @@ T partial_y(Array_2D <T> &A, int Nx, int Ny)
 template <typename T>
 T partial_xx(Array_2D <T> &A, int Nx, int Ny)
 {
-	if (Nx < 3) 
+	if (Nx < 3)
 	{
 		T deriv = (1/(A.xstep*A.xstep)) * (\
 			(15.0/4.0)*A.get_elem(Nx,Ny) \
@@ -154,7 +154,7 @@ T partial_xx(Array_2D <T> &A, int Nx, int Ny)
 			- (5.0/6.0)*A.get_elem(Nx-5,Ny));
 		return deriv;
 	}
-	else 
+	else
 	{
 		T deriv = (1.0/(A.xstep*A.xstep)) * (\
 			(1.0/90.0)*A.get_elem(Nx-3,Ny) \
@@ -172,7 +172,7 @@ T partial_xx(Array_2D <T> &A, int Nx, int Ny)
 template <typename T>
 T partial_xx_2(Array_2D <T> &A, int Nx, int Ny)
 {
-	if (Nx < 3) 
+	if (Nx < 3)
 	{
 		T deriv = (1/(A.xstep*A.xstep)) * (\
 			2.0*A.get_elem(Nx,Ny) \
@@ -180,7 +180,7 @@ T partial_xx_2(Array_2D <T> &A, int Nx, int Ny)
 			+ 4.0*A.get_elem(Nx+2,Ny) \
 			- 1.0*A.get_elem(Nx+3,Ny));
 		return deriv;
-	} 
+	}
 	else if (Nx > (A.Nx-4))
 	{
 		T deriv = (1/(A.xstep*A.xstep)) * (\
@@ -190,7 +190,7 @@ T partial_xx_2(Array_2D <T> &A, int Nx, int Ny)
 			- 1.0*A.get_elem(Nx-3,Ny));
 		return deriv;
 	}
-	else 
+	else
 	{
 		T deriv = (1.0/(A.xstep*A.xstep)) * (\
 			- (1.0/12.0)*A.get_elem(Nx-2,Ny) \
@@ -206,7 +206,7 @@ T partial_xx_2(Array_2D <T> &A, int Nx, int Ny)
 template <typename T>
 T partial_yy(Array_2D <T> &A, int Nx, int Ny)
 {
-	if (Ny < 3) 
+	if (Ny < 3)
 	{
 		T deriv = (1/(A.ystep*A.ystep)) * (\
 			(15.0/4.0)*A.get_elem(Nx,Ny) \
@@ -216,7 +216,7 @@ T partial_yy(Array_2D <T> &A, int Nx, int Ny)
 			+ (61.0/12.0)*A.get_elem(Nx,Ny+4)\
 			- (5.0/6.0)*A.get_elem(Nx,Ny+5));
 		return deriv;
-	} 
+	}
 	else if (Ny > (A.Ny-4))
 	{
 		T deriv = (1/(A.ystep*A.ystep)) * (\
@@ -227,8 +227,8 @@ T partial_yy(Array_2D <T> &A, int Nx, int Ny)
 			+ (61.0/12.0)*A.get_elem(Nx,Ny-4)\
 			- (5.0/6.0)*A.get_elem(Nx,Ny-5));
 		return deriv;
-	} 
-	else 
+	}
+	else
 	{
 		T deriv = (1.0/(A.ystep*A.ystep)) * (\
 			(1.0/90.0)*A.get_elem(Nx,Ny-3) \
@@ -261,19 +261,19 @@ T integrate_2D(Array_2D <T> &A)
 	sum1 = (A.get_elem(0,0) + A.get_elem(0,NY) + A.get_elem(NX,0) + A.get_elem(NX,NY));
 
 //	Border terms
-	for (ii = 1; ii < NX; ii++) 
+	for (ii = 1; ii < NX; ii++)
 	{
 		sum2 += A.get_elem(ii,0);
 	}
-	for (ii = 1; ii < NX; ii++) 
+	for (ii = 1; ii < NX; ii++)
 	{
 		sum2 += A.get_elem(ii,NY);
 	}
-	for (jj = 1; jj < NY; jj++) 
+	for (jj = 1; jj < NY; jj++)
 	{
 		sum2 += A.get_elem(0,jj);
 	}
-	for (jj = 1; jj < NY; jj++) 
+	for (jj = 1; jj < NY; jj++)
 	{
 		sum2 += A.get_elem(NX,jj);
 	}
@@ -282,7 +282,7 @@ T integrate_2D(Array_2D <T> &A)
 //	Center terms
 	for (ii = 1; ii<NX; ii++)
 	{
-		for (jj = 1; jj<NY; jj++) 
+		for (jj = 1; jj<NY; jj++)
 		{
 			sum3 += A.get_elem(ii,jj);
 		}
@@ -307,19 +307,19 @@ T integrate_2D(Array_2D <T> &A, Limits_2D &L)
 	sum1 = (A.get_elem(L.XL,L.YL) + A.get_elem(L.XL,L.YU) + A.get_elem(L.XU,L.YL) + A.get_elem(L.XU,L.YU));
 
 //	Border terms
-	for (ii = L.XL+1; ii < L.XU; ii++) 
+	for (ii = L.XL+1; ii < L.XU; ii++)
 	{
 		sum2 += A.get_elem(ii,L.YL);
 	}
-	for (ii = L.XL+1; ii < L.XU; ii++) 
+	for (ii = L.XL+1; ii < L.XU; ii++)
 	{
 		sum2 += A.get_elem(ii,L.YU);
 	}
-	for (jj = L.YL+1; jj < L.YU; jj++) 
+	for (jj = L.YL+1; jj < L.YU; jj++)
 	{
 		sum2 += A.get_elem(L.XL,jj);
 	}
-	for (jj = L.YL+1; jj < L.YU; jj++) 
+	for (jj = L.YL+1; jj < L.YU; jj++)
 	{
 		sum2 += A.get_elem(L.XU,jj);
 	}
@@ -328,7 +328,7 @@ T integrate_2D(Array_2D <T> &A, Limits_2D &L)
 //	Center terms
 	for (ii = L.XL+1; ii<L.XU; ii++)
 	{
-		for (jj = L.YL+1; jj<L.YU; jj++) 
+		for (jj = L.YL+1; jj<L.YU; jj++)
 		{
 			sum3 += A.get_elem(ii,jj);
 		}
@@ -497,7 +497,7 @@ void normalize_wxfxn_2D(Array_2D <T> &A)
 {
 	int ii;
 	double norm = get_wvfxn_norm_2D(A);
-	for (ii = 0; ii < A.Nx*A.Ny; ii++) 
+	for (ii = 0; ii < A.Nx*A.Ny; ii++)
 	{
 		A.grid[ii] /= norm;
 	}
@@ -509,7 +509,7 @@ void normalize_wxfxn_2D(Array_2D <T> &A, Array_2D <T> &S)
 {
 	int ii;
 	double norm = get_wvfxn_norm_2D(A,S);
-	for (ii = 0; ii < A.Nx*A.Ny; ii++) 
+	for (ii = 0; ii < A.Nx*A.Ny; ii++)
 	{
 		A.grid[ii] /= norm;
 	}

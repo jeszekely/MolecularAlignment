@@ -38,13 +38,13 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $(GSL_INC) -o $(BIN) -I./include $(OBJ) $(BOOST_INC) $(LIBS)
 
 obj/main.o: src/main.cpp
-	$(CC) $(CFLAGS) $(GSL_INC) -c  src/main.cpp -o obj/main.o $(BOOST_INC) -I./include 
+	$(CC) $(CFLAGS) $(GSL_INC) -c  src/main.cpp -o obj/main.o $(BOOST_INC) -I./include
 
 obj/array_structs.o: src/array_structs.cpp
-	$(CC) $(CFLAGS)  -c src/array_structs.cpp  -o obj/array_structs.o  -I./include 
+	$(CC) $(CFLAGS)  -c src/array_structs.cpp  -o obj/array_structs.o  -I./include
 
 obj/numerics.o: src/numerics.cpp
-	$(CC) $(CFLAGS) $(GSL_INC) -c src/numerics.cpp  -o obj/numerics.o  -I./include 
+	$(CC) $(CFLAGS) $(GSL_INC) -c src/numerics.cpp  -o obj/numerics.o  -I./include
 
-obj/quantum_dynamics.o: src/quantum_dynamics.cpp 
+obj/quantum_dynamics.o: src/quantum_dynamics.cpp
 	$(CC) $(CFLAGS) -c src/quantum_dynamics.cpp -o obj/quantum_dynamics.o -I./include $(BOOST_INC)

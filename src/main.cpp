@@ -58,7 +58,7 @@ Get Data from the inputfile
 
 //	First copy input file and strip comments
 	fstream inputfile;
-	if (argc < 2) 
+	if (argc < 2)
 	{
 		cout << "Please provide the name of the json inputfile" << endl;
 		exit(1);
@@ -66,9 +66,9 @@ Get Data from the inputfile
 	else
 	{
 		inputfile.open(argv[1]);
-		
+
 	}
-	
+
 	ofstream inputcopy;
 	inputcopy.open("output_data/inputs.json");
 	string line;
@@ -94,35 +94,35 @@ Get Data from the inputfile
 
 //	[FDTDField]
     string FieldFile 	= pt.get<string>("FDTDField.File","XAgFilmX-3col.txt");
-    cout << "Reading file " << FieldFile << endl;  
+    cout << "Reading file " << FieldFile << endl;
     double laser_power 	= pt.get<double>("FDTDField.laser_power",10.0);
     double laser_focus 	= pt.get<double>("FDTDField.laser_focus",5.0);
-    double Field_a = pt.get<double>("FDTDField.meep_a",100.0); 
+    double Field_a = pt.get<double>("FDTDField.meep_a",100.0);
     double Field_res = pt.get<double>("MolFile.meep_res",20.0);
 
 //	[MoleculeParameters]
 
     string MolFile 	= pt.get<string>("MoleculeParameters.ParamFile","Molecules.json");
     string Molecule = pt.get<string>("MoleculeParameters.Molecule","N2");
-    
+
 //	[CalculationParameters]
 	int Procs 	= pt.get<int>("CalculationParameters.Procs",1);
 	int JMax 	= pt.get<int>("CalculationParameters.JStates",10);
 	int UseM	= pt.get<int>("CalculationParameters.UseM",0);
 	int UseOdd	= pt.get<int>("CalculationParameters.UseOdd",0);
 	int AllField = pt.get<int>("CalculationParameters.AllField",0);
-	int num_procs = pt.get<int>("CalculationParameters.Threads",1); 
+	int num_procs = pt.get<int>("CalculationParameters.Threads",1);
 
 //	[TrajectoryParameters]
-	double InitialX = pt.get<double>("TrajectoryParameters.InitialX",3.0); 
+	double InitialX = pt.get<double>("TrajectoryParameters.InitialX",3.0);
     double InitialY = pt.get<double>("TrajectoryParameters.InitialY",25.0);
-    double ttotal 	= pt.get<double>("TrajectoryParameters.ttotal",2.0e8); 
+    double ttotal 	= pt.get<double>("TrajectoryParameters.ttotal",2.0e8);
     int tsteps = pt.get<int>("TrajectoryParameters.tsteps",2000);
     int dt_image_out = pt.get<int>("TrajectoryParameters",100);
 
 //	[Outputs]
 	int JBasisOut = pt.get<int>("Outputs.JBasis",0);
-	int EigenVectorsOut = pt.get<int>("Outputs.EigenVectors",0); 
+	int EigenVectorsOut = pt.get<int>("Outputs.EigenVectors",0);
 
 /***************************
 Get molecule data
@@ -194,8 +194,8 @@ Fill Array with data from file
 	double power_factor = sqrt(sqrt(10.0));
 	double laser_intensity;
 	laser_intensity = laser_power / (M_PI * pow(laser_focus,2)); // W/cm^2
-	laser_intensity /= LASERINTEN; // to au	
-	
+	laser_intensity /= LASERINTEN; // to au
+
 //	double field_E0 = sqrt(2.0*laser_intensity/(C*VACPERM)); // E0 value in atomic units
 
 	while(getline(data,line))
@@ -215,22 +215,22 @@ Fill Array with data from file
 //	cout << "The laser intensity is " << scientific << setprecision(2) << laser_intensity*LASERINTEN << "W/cm^2"<< endl;
 
 /**************************************
-Define field iterator array for loop 
+Define field iterator array for loop
 ***************************************/
 
-	Array_2D <double> *EMF; 
-	Array_2D <double> Powers(13*4,1); 
+	Array_2D <double> *EMF;
+	Array_2D <double> Powers(13*4,1);
 	if (AllField != 0)
 	{
-		EMF = &EMField; 
+		EMF = &EMField;
 	}
 	else
 	{
-		ii = 0; 
+		ii = 0;
 		for (laser_power = 1.0e3; laser_power < 1.0e16; laser_power *= power_factor,ii++)
 		{
 			//cout << laser_power << endl;
-			Powers.grid[ii] = laser_power/LASERINTEN; 
+			Powers.grid[ii] = laser_power/LASERINTEN;
 		}
 		EMF = &Powers;
 	}
@@ -347,26 +347,26 @@ Define the Hamiltonian
 	bond /= 0.528; 		//Angstroms to au
 //	Define rotational constant
 	double Be = pow(HBAR,2)*0.5*(1.0/pow(bond,2))*(amass1+amass2)/(amass2*amass1);
-	double percent_complete,prev_kk; 
+	double percent_complete,prev_kk;
 
 	Array_2D <double> H_total_FFB(NEq,NEq);
-	Array_2D <double> COSARRAY(EMF->Nx,EMF->Ny); 
-	Array_2D <double> ENERGYARRAY(EMF->Nx,EMF->Ny); 
+	Array_2D <double> COSARRAY(EMF->Nx,EMF->Ny);
+	Array_2D <double> ENERGYARRAY(EMF->Nx,EMF->Ny);
 
-	ofstream EigenOut; 
+	ofstream EigenOut;
 	if (EigenVectorsOut != 0)
 	{
-		EigenOut.open("output_data/EigenVectorPopulations.txt"); 
+		EigenOut.open("output_data/EigenVectorPopulations.txt");
 	}
 //
-	cout << "Beginning Calculation..." << endl << fixed; 
-	prev_kk = 0; 
+	cout << "Beginning Calculation..." << endl << fixed;
+	prev_kk = 0;
 	for (kk = 0; kk < EMF->Nx*EMF->Ny; kk++)
-	{	
+	{
 		efield = EMF->grid[kk];
 		percent_complete = 100 * (float)kk/(float)(xsize*ysize);
 		if ((int)percent_complete != prev_kk) cout << percent_complete << "\r";
-		prev_kk = percent_complete; 
+		prev_kk = percent_complete;
 
 		for (ii = 0; ii < H_total_FFB.Nx; ii++)
 		{
@@ -379,18 +379,18 @@ Define the Hamiltonian
 			}
 			if (ii < 9 && jj < 9) cout << endl;
 		}
-		cout.precision(1);	
+		cout.precision(1);
 
 	/*************************************
 	Find Eigenvectors of Total Hamiltonian
-	**************************************/	
+	**************************************/
 
 		EigenValues = new double[n];
 		EigenVectors = new double[n*n];
 		for (ii = 0; ii < n*n; ii++)
 		{
 			EigenVectors[ii] = H_total_FFB.grid[ii];
-		}	
+		}
 
 		lwork = -1;
 	// get eigenvalues and eigenvectors
@@ -415,20 +415,20 @@ Define the Hamiltonian
 		}
 	/****************************
 	Get cos^2 of the ground state
-	*****************************/	
+	*****************************/
 
 	//	Place Eigenvector ground state in it's own array
 		Array_1D <double> GroundState(n);
 		for (ii=0; ii<n; ii++)
 		{
 			GroundState.set_elem(ii,EigenVectors[ii]);
-		}	
+		}
 
 	//	Matrix multiply, C := alpha*A*B + beta*C
 		double alpha = 1;
 		double beta = 0;
 		int ONE = 1;
-		Array_1D <double> Product(n); //C Matrix	
+		Array_1D <double> Product(n); //C Matrix
 
 		dgemm(	"N", 				//Don't transpose A
 				"N", 				//Don't transpose B
@@ -442,38 +442,38 @@ Define the Hamiltonian
 				&n, 				//Leading dimension of B
 				&beta,
 				Product.grid, 		//C matrix
-				&n); 				//Leading dimension of C	
+				&n); 				//Leading dimension of C
 
 		double cossq_alignment = ddot(&n, Product.grid, &ONE, GroundState.grid, &ONE);
-	//	print_matrix("cos^2 theta",10,10,cossq.grid,cossq.Nx);	
+	//	print_matrix("cos^2 theta",10,10,cossq.grid,cossq.Nx);
 
 		if (EigenVectorsOut != 0)
 		{
 			for (int i = 0; i < n; ++i)
-			{ 
-				EigenOut << efield*LASERINTEN << " " << 2*i << " " << pow(abs(GroundState.get_elem(i)),2) << endl; 
+			{
+				EigenOut << efield*LASERINTEN << " " << 2*i << " " << pow(abs(GroundState.get_elem(i)),2) << endl;
 			}
-			EigenOut << endl; 
+			EigenOut << endl;
 		}
 
-		COSARRAY.grid[kk] = cossq_alignment; 
-		ENERGYARRAY.grid[kk] = EigenValues[0]; 
+		COSARRAY.grid[kk] = cossq_alignment;
+		ENERGYARRAY.grid[kk] = EigenValues[0];
 
 		delete [] EigenValues;
 		delete [] EigenVectors;
 }
 	EigenOut.close();
 
-	cout << endl << "Calculation Complete" << endl; 
+	cout << endl << "Calculation Complete" << endl;
 	ofstream AlignmentFile;
 	AlignmentFile.open("output_data/AlignmentData.txt");
 	for (ii=0; ii<ENERGYARRAY.Nx; ii++)
 	{
 		for (jj=0; jj<ENERGYARRAY.Ny; jj++)
 		{
-			AlignmentFile << ii << " " << jj << " " << EMF->get_elem(ii,jj) << " " << COSARRAY.get_elem(ii,jj) << " " << ENERGYARRAY.get_elem(ii,jj) << endl; 
+			AlignmentFile << ii << " " << jj << " " << EMF->get_elem(ii,jj) << " " << COSARRAY.get_elem(ii,jj) << " " << ENERGYARRAY.get_elem(ii,jj) << endl;
 		}
-		AlignmentFile << endl; 
+		AlignmentFile << endl;
 	}
 
 	AlignmentFile.close();
@@ -481,42 +481,42 @@ Define the Hamiltonian
 /*******************************************
 Calculate QM Trajectory using calculated PES
 ********************************************/
-	
-	double dt = ttotal/tsteps; 
+
+	double dt = ttotal/tsteps;
 	dt /= 2.41e-2; //fs -> au
-	ttotal /= 2.41e-2; 
+	ttotal /= 2.41e-2;
 	cout << "Considering trajectory for " << dt*tsteps/1.89e7 << " ns." << endl;
-	cout << endl << "Beginning quantum mechanical trajectory..." << endl; 
+	cout << endl << "Beginning quantum mechanical trajectory..." << endl;
 
 	//Initialize fftw threading
-	fftw_init_threads(); 
-	fftw_plan_with_nthreads(Procs); 
+	fftw_init_threads();
+	fftw_plan_with_nthreads(Procs);
 
 	//define step sizes and calculation arrays
 	double xstep = Field_a/(LEN*Field_res); //Field Spacing in au
-	double ystep = xstep; 
-	double pstep = M_PI*2.0/(xsize*xstep); 
+	double ystep = xstep;
+	double pstep = M_PI*2.0/(xsize*xstep);
 	double qstep = M_PI*2.0/(ysize*ystep);
 
-	Array_1D <double> Xgrid(xsize); 
-	Xgrid.xinit = 0.0; 
-	Xgrid.xstep = xstep; 
-	Xgrid.fill_array(); 
+	Array_1D <double> Xgrid(xsize);
+	Xgrid.xinit = 0.0;
+	Xgrid.xstep = xstep;
+	Xgrid.fill_array();
 
-	Array_1D <double> Ygrid(ysize); 
-	Ygrid.xinit = 0.0; 
-	Ygrid.xstep = ystep; 
-	Ygrid.fill_array(); 
-	
-	Array_1D <double> Pgrid(xsize); 
-	Pgrid.xinit = 0.0; 
-	Pgrid.xstep = pstep; 
-	Pgrid.fill_array(); 
-	
-	Array_1D <double> Qgrid(ysize); 
-	Qgrid.xinit = 0.0; 
-	Qgrid.xstep = qstep; 
-	Qgrid.fill_array(); 
+	Array_1D <double> Ygrid(ysize);
+	Ygrid.xinit = 0.0;
+	Ygrid.xstep = ystep;
+	Ygrid.fill_array();
+
+	Array_1D <double> Pgrid(xsize);
+	Pgrid.xinit = 0.0;
+	Pgrid.xstep = pstep;
+	Pgrid.fill_array();
+
+	Array_1D <double> Qgrid(ysize);
+	Qgrid.xinit = 0.0;
+	Qgrid.xstep = qstep;
+	Qgrid.fill_array();
 
 	//Correct array ordering
 	for (ii = xsize/2; ii < xsize; ii++)
@@ -529,9 +529,9 @@ Calculate QM Trajectory using calculated PES
 		Qgrid.grid[jj] = -1.0*Qgrid.grid[ysize - jj];
 	}
 
-	Array_2D <double> KE(xsize, ysize); 
-	KE.xstep = pstep; 
-	KE.ystep = qstep; 
+	Array_2D <double> KE(xsize, ysize);
+	KE.xstep = pstep;
+	KE.ystep = qstep;
 	for (ii = 0; ii < KE.Nx; ii++)
 	{
 		for (jj = 0; jj < KE.Ny; jj++)
@@ -540,7 +540,7 @@ Calculate QM Trajectory using calculated PES
 		}
 	}
 
-	cplx comp; 
+	cplx comp;
 
 	Array_2D <cplx> KinetOp(KE.Nx,KE.Ny);
 	for (ii=0; ii < KE.Nx*KE.Ny; ii++)
@@ -557,18 +557,18 @@ Calculate QM Trajectory using calculated PES
 	}
 
 	//Set up the wavefunction array
-	Array_2D <cplx> Wvfxn(xsize, ysize); 
-	Wvfxn.xstep = xstep; 
-	Wvfxn.ystep = ystep; 
+	Array_2D <cplx> Wvfxn(xsize, ysize);
+	Wvfxn.xstep = xstep;
+	Wvfxn.ystep = ystep;
 
-	fftw_plan forplan, backplan; 
-	forplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_FORWARD, FFTW_MEASURE); 
-	backplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_BACKWARD, FFTW_MEASURE); 
+	fftw_plan forplan, backplan;
+	forplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_FORWARD, FFTW_MEASURE);
+	backplan = fftw_plan_dft_2d(Wvfxn.Nx, Wvfxn.Ny, (fftw_complex *)Wvfxn.grid, (fftw_complex *)Wvfxn.grid, FFTW_BACKWARD, FFTW_MEASURE);
 
 	//Set initial wavefunction
 	// for (ii = 0; ii < Wvfxn.Nx*Wvfxn.Ny; ii++)
 	// {
-	// 	Wvfxn.grid[ii] = 0.0; 
+	// 	Wvfxn.grid[ii] = 0.0;
 	// }
 	for (ii = 0; ii < Wvfxn.Nx; ii++)
 	{
@@ -579,23 +579,23 @@ Calculate QM Trajectory using calculated PES
 	}
 //	normalize_wxfxn_2D(Wvfxn);
 
-	//Place the Particle at an initial location 
+	//Place the Particle at an initial location
 	cout << (int)(InitialY*Field_res) << " " << (int)(InitialX*Field_res) << endl;
  	//Wvfxn.set_elem((int)(InitialY*Field_res),(int)(InitialX*Field_res), 1.0);
-	int tindex = 0; 
-	do 
+	int tindex = 0;
+	do
 	{
 		if (tindex % dt_image_out == 0)
 		{
-			print_wvfxn(Wvfxn, Xgrid, Ygrid, tindex); 
+			print_wvfxn(Wvfxn, Xgrid, Ygrid, tindex);
 		}
-		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan); 
-		Wvfxn.time += dt; 
-		tindex++; 
+		SplitOp2D_Step(Wvfxn,KinetOp,PotenOp,forplan,backplan);
+		Wvfxn.time += dt;
+		tindex++;
 	} while (Wvfxn.time < ttotal);
 
 
-	cout << endl << "Done. " << tindex << " total time steps." << endl; 
+	cout << endl << "Done. " << tindex << " total time steps." << endl;
 
 /*********************
 Print final commments
@@ -612,7 +612,7 @@ Print final commments
 
 double gaussian(double x, double y, double xcen, double ycen)
 {
-	return exp(-1.0*(pow(x-xcen,2.0) + pow(y-ycen,2.0))/pow(50.0,2.0)); 
+	return exp(-1.0*(pow(x-xcen,2.0) + pow(y-ycen,2.0))/pow(50.0,2.0));
 };
 
 

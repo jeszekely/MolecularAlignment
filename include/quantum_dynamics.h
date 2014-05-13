@@ -341,7 +341,7 @@ void get_Dcoefficients(Array_2D <T> &A, EigenArray_1D <T> &Eigen, Array_1D <U> &
 // cplx get_junction_Cnm(Array_2D <T> &Psi, EigenArray_1D <T> &ElecStates, EigenArray_1D <T> &MolStates, Limits_2D &L, int m, int n, int offset, Array_2D <T> &Scrap)
 // {
 // 	int ii,jj;
-// 	T *Elec 	= ElecStates.get_array_addr(n);  
+// 	T *Elec 	= ElecStates.get_array_addr(n);
 // 	T *Mol 		= MolStates.get_array_addr(m);
 
 // 	#pragma omp parallel for default(shared) private(ii,jj)
@@ -349,10 +349,10 @@ void get_Dcoefficients(Array_2D <T> &A, EigenArray_1D <T> &Eigen, Array_1D <U> &
 // 	{
 // 		for (jj = 0; jj < MolStates.Nx; jj++)
 // 		{
-// 			Scrap.set_elem(ii+offset,jj, Psi.get_elem(ii+offset,jj)*Elec[ii]*Mol[jj]); 
+// 			Scrap.set_elem(ii+offset,jj, Psi.get_elem(ii+offset,jj)*Elec[ii]*Mol[jj]);
 // 		}
 // 	}
 
-// 	cplx Cnm 	= integrate_2D(Scrap,L); 
+// 	cplx Cnm 	= integrate_2D(Scrap,L);
 // 	return Cnm;
 // }
